@@ -1,0 +1,350 @@
+package com.company.springmvcweb;
+
+import com.company.springmvcweb.data.*;
+import com.company.springmvcweb.dto.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
+import static com.company.springmvcweb.data.ImageDisplay.uploadPathProject;
+
+
+@Controller
+public class ProjectController {
+
+    private ItemRepository repo;
+    private ProjectRepository repo1;
+
+
+    public ProjectController() {
+        repo = new ItemRepository();
+        repo1 = new ProjectRepository();
+    }
+
+    @GetMapping("/projects")
+    public String viewProjects(Model model) {
+        var projects = repo1.getProjects();
+        model.addAttribute("title", "Pasākumi");
+        model.addAttribute("projects", projects);
+        return "projects";
+    }
+
+    @PostMapping("/projects")
+    public String viewProjects() {
+        return "projects_detail";
+    }
+
+    @GetMapping("/msgboard")
+    public String viewMessageBoard(Model model) {
+        var m = new Message();
+        var mess = (Message)m.getMessage(1);
+        var message = mess.getText();
+        model.addAttribute("title", "Tāfele");
+        model.addAttribute("message", message);
+        return "msgboard";
+    }
+
+    @PostMapping("/msgboard")
+    public ModelAndView saveMessageBoard(Model model, @RequestParam String text) {
+        var m = new Message();
+        m.updateMessage(new Message(1,text));
+        return new ModelAndView("redirect:/msgboard");
+    }
+
+    @GetMapping("/projects/{projectId}")
+    public String viewProject(@PathVariable int projectId,Model model) {
+        var project = (Project)repo1.getProject(projectId);
+        var stockItems = repo1.getStockListItems(project);
+        var items = new ArrayList<Item>();
+        for (var i: stockItems) {
+            var it = (Item)repo.getItem(i.getItemId());
+            items.add(new Item(it.getId(), it.getName(), it.getPic(), it.getPrice(), it.getTotalCount(),i.getItemQuantity(),i.getItemPrice(),it.getCategory(),i.isItemDone()));
+}
+        var sortedItems = new ArrayList<Item>();
+        sortedItems = repo.sortPerCategory(sortedItems, items);
+        var sum = repo.getProjectSum(sortedItems);
+        model.addAttribute("title", project.getTitle());
+        model.addAttribute("items", sortedItems);
+        model.addAttribute("project", project);
+        model.addAttribute("sum", String.format("%.2f",sum));
+        model.addAttribute("sumVat", String.format("%.2f",sum*1.21));
+
+        return "projects_detail";
+    }
+
+    @GetMapping("/projects/{projectId}/confirm")
+    public String deleteProjectConfirm(@PathVariable int projectId,Model model) {
+        var project = (Project)repo1.getProject(projectId);
+        model.addAttribute("title", "Projekts " + project.getTitle());
+        model.addAttribute("project", project);
+        model.addAttribute("confirmDelete", project);
+        return "projects_detail";
+    }
+
+    @GetMapping("/projects/{projectId}/delete")
+    public ModelAndView deleteProject (@PathVariable int projectId) {
+        var project = (Project)repo1.getProject(projectId);
+        if(repo1.getStockListItems(project) != null){
+            repo1.deleteStockListItemsByProject(projectId);
+        }
+        repo1.deleteProject(projectId);
+        return new ModelAndView("redirect:/projects");
+    }
+
+    @GetMapping("/projects/{projectId}/update")
+    public String updateProject (@PathVariable int projectId, Model model) {
+        var project = (Project)repo1.getProject(projectId);
+        model.addAttribute("projectId",projectId);
+        model.addAttribute("project", project);
+        model.addAttribute("title", "Projekts " + project.getTitle());
+        return "projects_id_update";
+    }
+    @PostMapping("/projects/{projectId}/update")
+    public ModelAndView updateProjectSave (@PathVariable int projectId, ProjectSaveDto dto, Model model) {
+        var project = (Project) repo1.getProject(projectId);
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("project", project);
+        var title = "";
+        var location = "";
+        var dateString = "";
+        var description = "";
+        if (dto.getTitle() == null) {
+            title = project.getTitle();
+        } else {
+            title = dto.getTitle();
+        }
+        if (dto.getLocation() == null) {
+            location = project.getLocation();
+        } else {
+            location = dto.getLocation();
+        }
+        LocalDate date;
+        if (dto.getDate() == null) {
+            date= project.getDate();
+        } else {
+            dateString = dto.getDate();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            date = LocalDate.parse(dateString, formatter);
+        }
+        if (dto.getDescription() == null) {
+            description = project.getDescription();
+        } else {
+            description = dto.getDescription();
+        }
+        var projectUpdate = new Project(projectId, title, location, date, description,project.getPics(), project.getItems());
+        repo1.updateProject(projectUpdate);
+        return new ModelAndView("redirect:/projects/{projectId}");
+    }
+
+    @GetMapping("/projects/{projectId}/list/edit")
+    public String editProjectList(@PathVariable int projectId,Model model) {
+        var project = (Project)repo1.getProject(projectId);
+        var stockItems = repo1.getStockListItems(project);
+        var items = new ArrayList<Item>();
+        for (var i: stockItems) {
+            var it = (Item)repo.getItem(i.getItemId());
+            items.add(new Item(it.getId(), it.getName(), it.getPic(), it.getPrice(), it.getTotalCount(), i.getItemQuantity(),i.getItemPrice(),it.getCategory(),i.isItemDone()));
+        }
+        var sortedItems = new ArrayList<Item>();
+        sortedItems = repo.sortPerCategory(sortedItems,items);
+        var sum = repo.getProjectSum(sortedItems);
+        model.addAttribute("title", project.getTitle());
+        model.addAttribute("items", sortedItems);
+        model.addAttribute("sum", String.format("%.2f",sum));
+        model.addAttribute("sumVat", String.format("%.2f",sum*1.21));
+        return "projects_stock_list_edit";
+    }
+
+    @PostMapping("/projects/{projectId}/list/edit")
+    public ModelAndView editProjectListPost(@PathVariable int projectId,@ModelAttribute ItemSaveDto2 dto, Model model) {
+        var project = (Project)repo1.getProject(projectId);
+        var stockItems = repo1.getStockListItems(project);
+        var items = new ArrayList<Item>();
+        for (var i: stockItems) {
+            var it = (Item)repo.getItem(i.getItemId());
+            items.add(new Item(it.getId(), it.getName(), it.getPic(), it.getPrice(), it.getTotalCount(), i.getItemQuantity(),i.getItemPrice(),it.getCategory(),i.isItemDone()));
+        }
+        var sortedItems = new ArrayList<Item>();
+        sortedItems = repo.sortPerCategory(sortedItems,items);
+        var qties = dto.getQuantity();
+        var prices = dto.getPrice();
+        for (int i = 0; i < qties.size(); i++) {
+            if(qties.get(i) !=null){
+                repo1.updateStockListItemQuantityOrPrice(sortedItems.get(i).getId(),projectId,qties.get(i), prices.get(i));
+            }
+        }
+        for (int i = 0; i < prices.size(); i++) {
+            if(prices.get(i) !=null){
+                repo1.updateStockListItemQuantityOrPrice(sortedItems.get(i).getId(),projectId,qties.get(i), prices.get(i));
+            }
+        }
+        var dones = dto.getDone();
+        if(dones!=null){
+            for (var i:stockItems) {
+                repo1.updateStockListItemDone(i.getItemId(),projectId,false);
+            }
+            for (var i:stockItems) {
+                for (var j: dones) {
+                    if(i.getItemId()==j){
+                        repo1.updateStockListItemDone(j,projectId,true);
+                    }
+                }
+            }
+        }
+        model.addAttribute("title", "Projekts "+project.getTitle());
+        model.addAttribute("items", sortedItems);
+        return new ModelAndView("redirect:/projects/{projectId}/list/edit");
+    }
+
+    @GetMapping("/projects/{projectId}/list/delete/{id}")
+    public ModelAndView deleteItemFromProjectList(@PathVariable int projectId, @PathVariable int id, Model model) {
+        var project = (Project)repo1.getProject(projectId);
+        repo1.deleteStockListItem(id,projectId);
+        model.addAttribute("title", "Projekts "+project.getTitle());
+        model.addAttribute("id", id);
+        return new ModelAndView("redirect:/projects/{projectId}/list/edit");
+    }
+
+    @GetMapping("/projects/{projectId}/add")
+    public String newProject(@PathVariable int projectId, Model model) {
+        var speakers = repo.getItemsPerCategory(Category.CatValues.SPEAKER);
+        var mics =  repo.getItemsPerCategory(Category.CatValues.MIC);
+        var consoles =  repo.getItemsPerCategory(Category.CatValues.CONSOLE);
+        var nmspotlights =  repo.getItemsPerCategory(Category.CatValues.NMSPOTLIGHT);
+        var mspotlights =  repo.getItemsPerCategory(Category.CatValues.MSPOTLIGHT);
+        var lights = repo.getItemsPerCategory(Category.CatValues.LIGHTS);
+        var stands =  repo.getItemsPerCategory(Category.CatValues.STAND);
+        var cables = repo.getItemsPerCategory(Category.CatValues.CABLE);
+        var trusses =  repo.getItemsPerCategory(Category.CatValues.TRUSS);
+        var stage = repo.getItemsPerCategory(Category.CatValues.STAGE);
+        var video =  repo.getItemsPerCategory(Category.CatValues.VIDEO);
+        var work =  repo.getItemsPerCategory(Category.CatValues.WORK);
+        var transport =  repo.getItemsPerCategory(Category.CatValues.TRANSPORT);
+        var misc = repo.getItemsPerCategory(Category.CatValues.MISC);
+        model.addAttribute("title", "Tehnikas saraksts");
+        model.addAttribute("cables", cables);
+        model.addAttribute("mics", mics);
+        model.addAttribute("speakers", speakers);
+        model.addAttribute("consoles", consoles);
+        model.addAttribute("stands", stands);
+        model.addAttribute("trusses", trusses);
+        model.addAttribute("video", video);
+        model.addAttribute("lights", lights);
+        model.addAttribute("work", work);
+        model.addAttribute("stage", stage);
+        model.addAttribute("nmspotlights", nmspotlights);
+        model.addAttribute("mspotlights", mspotlights);
+        model.addAttribute("misc", misc);
+        model.addAttribute("transport", transport);
+        return "projects_id_add";
+    }
+
+    @PostMapping("/projects/{projectId}/add")
+    public ModelAndView newProjectQuantities(@PathVariable int projectId, @RequestParam String check, Model model) {
+        var project = (Project)repo1.getProject(projectId);
+        var addItems = Arrays.asList(check.split(","));
+        var items = new ArrayList<Item>();
+        for (var item: addItems) {
+            var i = (Item)repo.getItem(Integer.parseInt(item));
+            items.add(i);
+        }
+        for (var i: items) {
+            repo1.addStockListItem(project,i.getId(),i.getPrice(),i.getQuantity());
+        }
+        model.addAttribute("items", items);
+        model.addAttribute("title", project.getTitle());
+        return new ModelAndView("redirect:/projects/{projectId}/list/edit");
+    }
+
+    @GetMapping("/new_project")
+    public String addProject(Model model) {
+        model.addAttribute("title","Jauns projekts");
+        return "new_project";
+    }
+
+    @PostMapping("/new_project")
+    public ModelAndView saveProject(@ModelAttribute ProjectSaveDto dto) {
+        var d = dto.getDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(d, formatter);
+        repo1.addProject(new Project(0,dto.getTitle(),dto.getLocation(), date, dto.getDescription()));
+        return new ModelAndView("redirect:/projects");
+    }
+
+    @GetMapping("/projects/{id}/gallery")
+    public String gallery(@PathVariable int id, Model model) throws IOException {
+        var p = (Project)repo1.getProject(id);
+        if(p.getPics() != null){
+            String[] picArray = p.getPics().split(";");
+           ArrayList<String> pics= new ArrayList<>();
+            for (var pic: picArray) {
+                var image = new ImageDisplay();
+                    pics.add(image.displayImageFromPath(uploadPathProject+pic));
+                System.out.println(uploadPathProject+pic);
+            }
+            model.addAttribute("pics",pics);
+        }
+        model.addAttribute("title", p.getTitle());
+        model.addAttribute("id",id);
+        return "projects_id_gallery";
+    }
+
+    @PostMapping("/projects/{id}/gallery")
+    public ModelAndView uploadGallery (@RequestParam("file") MultipartFile[] files, @PathVariable int id) throws IOException {
+        var p = (Project)repo1.getProject(id);
+        var filePaths = "";
+        if(p.getPics()== null){
+            for (int i = 0; i < files.length; i++) {
+                if(!Objects.equals(files[i].getOriginalFilename(), "")) {
+                    String filename = files[i].getOriginalFilename();
+                    String newPath = uploadPathProject + filename;
+                    files[i].transferTo(new File(newPath));
+                    String pic = filename;
+                    filePaths += pic + ";";
+                }
+        }
+    }
+        if(p.getPics() != null){
+            for (int i = 0; i < files.length; i++) {
+                if (!Objects.equals(files[i].getOriginalFilename(), "")) {
+                    String filename = files[i].getOriginalFilename();
+                    String newPath = uploadPathProject + filename;
+                    files[i].transferTo(new File(newPath));
+                    String pic = filename;
+                    filePaths += p.getPics() + pic + ";";
+                }
+            }
+        }
+        repo1.updateProject(new Project(p.getId(), p.getTitle(), p.getLocation(), p.getDate(), p.getDescription(),filePaths,p.getItems()));
+        return new ModelAndView("redirect:/projects/{id}/gallery");
+    }
+
+    @PostMapping("/projects/{id}/gallery/{picId}")
+    public ModelAndView uploadGallery (@PathVariable int id, @PathVariable int picId) {
+       var p = (Project)repo1.getProject(id);
+       String[] pics = p.getPics().split(";");
+       String newPics="";
+        for (int i = 0; i < pics.length; i++) {
+            if(i==picId){
+                newPics += "";
+            }
+            if(i!=picId){
+                newPics += pics[i]+";";
+            }
+        }
+        if(newPics.equals("")){
+            newPics = null;
+        }
+        repo1.updateProject(new Project(p.getId(), p.getTitle(), p.getLocation(), p.getDate(), p.getDescription(),newPics,p.getItems()));
+
+        return new ModelAndView("redirect:/projects/{id}/gallery");
+    }
+}

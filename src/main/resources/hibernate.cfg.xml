@@ -19,14 +19,13 @@
         </property>
 
         <property name = "hibernate.connection.username">
-            user
+            VSys
         </property>
 
         <property name = "hibernate.connection.password">
-            user123
+            VS
         </property>
 
-<!--        <property name="hibernate.enable_lazy_load_no_trans" value="true"/>-->
 
 
 

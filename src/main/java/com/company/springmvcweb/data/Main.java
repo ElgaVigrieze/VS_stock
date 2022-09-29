@@ -1,45 +1,47 @@
 package com.company.springmvcweb.data;
 
-import com.fasterxml.jackson.databind.util.EnumValues;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.company.springmvcweb.data.Category.valueOfLabel;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class Main {
-    public static void main(String[] args) {
 
-        var repo = new ItemRepository();
-        var repo1 = new ProjectRepository();
+    public static void main(String[] args) throws IOException, URISyntaxException {
+
+        var m = new Message();
+        var mes = (Message)m.getMessage(1);
+        System.out.println(mes.getText());
+
+//        var repo = new ItemRepository();
+//        var repo1 = new ProjectRepository();
+//        var f = new FTP();
+//
+//
+////        ftp.uploadFile("D:\\Pictures\\phone 2022_06\\7.jpg");
+////        File file = new File("D:\\Pictures\\phone 2022_06\\7.jpg");
+////        System.out.println(Arrays.toString(ftp.downloadFtpFile("ftp://192.168.1.2:10000/EON612.jpg")));
+//
+////        System.out.println(ftp.listFiles("/"));
+////
+////        ftp.downloadFile("/EON612.jpg", "C:\\Users\\Hilgas\\Downloads\\bildes\\EON612.jpg");
+//        f.open();
+//
+
+ //       f.downloadFile("/EON612.jpg", "C:\\Users\\Hilgas\\Downloads\\bildes\\EON612.jpg");
+
+//            File file1 = new File("D:\\Pictures\\phone 2022_06\\7.jpg");
+ //       File f = new File(newPath);
+//        ftp.putFileToPath(f, "/7.jpg");
+
+//        var is = f.downloadFile( "/7.jpg");
+//        Image image = ImageIO.read(is);
+//        System.out.println(image);
+//        f.endDownload();
 
 
-
-
-//        System.out.println(cat);
-//        var i = (Item)repo.getItem(4);
-
-//        var items =  repo1.getStockListItems((Project)repo1.getProject(6));
-//        for (var it: items
-//             ) {
-//            System.out.println(it.getItemId());
-//        }
-
-//        System.out.println(repo1.addStockListItem((Project)repo1.getProject(4),20,2));
-
-//        var items = (Project)repo1.getProject(4);
-//        ;
-//        System.out.println(items.getItems().get(0).getItemId());
-////        var items = repo1.getAllStockList();
-
-//var items =repo1.getProjects();
-//        System.out.println(items);
-
-//        System.out.println(items.getItems());
-
-//repo1.addProject(new Project(0,"18.novembris", "Tilta dārzs", LocalDate.parse("2022-11-17"),"lights, big stage"));
 
 }
+
 }

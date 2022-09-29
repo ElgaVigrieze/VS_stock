@@ -1,44 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:float="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layouts/default">
 <head>
-    <title th:text="${title}"></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link th:href="@{/css/main.css}" rel="stylesheet"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
-            crossorigin="anonymous"></script>
+    <div th:replace="fragments/headerstyle :: mystyle"></div>
+    <style>
+        h2{text-align: right;}
+    </style>
 </head>
 <body>
-<div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">
-                <img th:src="@{/img/clip.svg}" alt="Suppliers" width="30">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/projects">Projekti</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/items">Tehnikas saraksts</a>
-                    </li>
-                </ul>
-            </div>
-            <form th:action="@{/logout}" method="post">
-                <input type="submit" value="Izrakstīties" width="30">
-            </form>
-        </div>
-    </nav>
-
+<div th:replace="fragments/header :: myheader"></div>
+    <div class="container">
     <h1 th:text="${title}"></h1>
-
-
 
     <form method="post" th:action="${'/projects/'+projectId+'/list/edit'}" >
 
@@ -47,31 +20,29 @@
     <a th:href="${'/projects/'+projectId}" class="btn btn-secondary">Atpakaļ</a>
 
     <a th:href="${'/projects/'+projectId+'/add'}" class="btn btn-success" role="button">Pievienot tehniku</a>
-
-
-    <table class="table table-hover">
-
-        <form method="post" th:action="${'/new_project/'+projectId}" name="itemSaveDto">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Nosaukums</th>
-            <th>Kategorija</th>
-            <th>Daudzums</th>
-            <th>Izdarīts</th>
-            <th></th>
-        <tr/>
-        </thead>
+        <table class="table table-hover">
+        <header ><h2 th:text="'Kopsumma: ' + ${sum} + ' EUR / '+${sumVat} + ' EUR'" > </h2></header>
+            <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Daudzums</th>
+                    <th>Cena</th>
+                    <th>Pielāgota cena</th>
+                    <th>Izdarīts</th>
+                    <th></th>
+                <tr/>
+            </thead>
         <tbody>
         <tr th:each="item: ${items}">
-            <td>
-                <input type="number" readonly th:value="${item.getId()}" name="id"/>
-            </td>
             <td th:text="${item.getName()}"/>
-            <td th:text="${item.getCategory()}"/>
+            <td th:text="${item.getTotalCount()}"></td>
             <td>
-                <input type="number" name="quantity" th:placeholder="${item.getQuantity()}"/>
+                <input type="number" style="width: 70px" name="quantity" th:placeholder="${item.getQuantity()}"/>
             </td>
+
+            <td th:text="${item.getOriginalPrice()}"></td>
+            <td><input type="number" style="width: 70px" name="price" th:placeholder="${item.getPrice()}"/></td>
             <td>
                 <input type="checkbox" name="done" th:value="${item.getId()}" th:checked="${item.isDone()}">
             </td>
@@ -80,20 +51,10 @@
                     <img th:src="@{/img/trash-fill.svg}" width="30">
                 </a>
             </td>
-
-
-
-            <td>
-
-            </td>
-
         </tr>
         </tbody>
     </table>
-
-
-
-
+</form>
 </div>
 </body>
 </html>

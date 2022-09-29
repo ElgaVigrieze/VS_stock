@@ -12,11 +12,11 @@ import javax.persistence.*;
 
 public class MicItem extends Item{
 
-    public MicItem(int id, String name, Integer price, String pic, boolean isActive, Location location, int totalCount) {
+    public MicItem(int id, String name, Float price, String pic, boolean isActive, Location location, int totalCount) {
         super(id, name, price, pic, isActive, location, totalCount);
     }
 
-    public MicItem(int id, String name, Integer price, boolean isActive, Location location, int totalCount) {
+    public MicItem(int id, String name, Float price, boolean isActive, Location location, int totalCount) {
         super(id, name, price, isActive, location, totalCount);
     }
 

@@ -12,7 +12,7 @@ import javax.persistence.*;
 
 public class MiscItem extends Item{
 
-    public MiscItem(int id, String name, Integer price, String pic, boolean isActive, Location location, int totalCount) {
+    public MiscItem(int id, String name, Float price, String pic, boolean isActive, Location location, int totalCount) {
         super(id, name, price, pic, isActive, location, totalCount);
     }
 

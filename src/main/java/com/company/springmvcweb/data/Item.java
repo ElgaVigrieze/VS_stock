@@ -1,15 +1,14 @@
 package com.company.springmvcweb.data;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
-import org.springframework.boot.context.properties.bind.Name;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
+import java.util.Objects;
+
+import static com.company.springmvcweb.data.ImageDisplay.defaultPic;
+import static com.company.springmvcweb.data.ImageDisplay.uploadPathItem;
 
 @Data
 @NoArgsConstructor
@@ -24,7 +23,9 @@ public class Item {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
     private String name;
-    private Integer price;
+    @Column(name="price")
+    private Float price;
+    @Column(name="pic")
     private String pic;
     @Column(name="active")   //piemēram, remonts
     boolean isActive;
@@ -38,8 +39,10 @@ public class Item {
     private int quantity;
     @Transient
     private boolean done;
+    @Transient
+    private Float originalPrice;
 
-    public Item(int id, String name, Integer price, String pic, boolean isActive, Location location, int totalCount) {
+    public Item(int id, String name, Float price, String  pic, boolean isActive, Location location, int totalCount) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -50,7 +53,19 @@ public class Item {
 
     }
 
-    public Item(int id, String name, Integer price, boolean isActive, Location location, int totalCount) {
+    public Item(int id, String name, Float price, String  pic, boolean isActive, Category category, Location location, int totalCount) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.pic = pic;
+        this.isActive = isActive;
+        this.category = String.valueOf(category);
+        this.location = location;
+        this.totalCount = totalCount;
+
+    }
+
+    public Item(int id, String name, Float price, boolean isActive, Location location, int totalCount) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -60,7 +75,7 @@ public class Item {
 
     }
 
-    public Item(int id, String name, Integer price, boolean isActive, Location location, Category category, int totalCount) {
+    public Item(int id, String name, Float price, boolean isActive, Location location, Category category, int totalCount) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -78,23 +93,34 @@ public class Item {
 
     }
 
-    public Item(int id, String name, int quantity) {
+    public Item(int id, String name, int quantity, String category, Float price) {
         this.id = id;
         this.name = name;
+
         this.quantity = quantity;
+        this.category = category;
+        this.price = price;
 
     }
 
-    public Item(int id, String name, int quantity, String category, boolean done) {
+    public Item(int id, String name, String  pic, Float originalPrice, Integer totalCount, int quantity, Float price, String category, boolean done) {
         this.id = id;
         this.name = name;
+        this.pic = pic;
+        this.originalPrice=originalPrice;
+        this.totalCount = totalCount;
         this.quantity = quantity;
+        this.price=price;
         this.category = category;
         this.done = done;
     }
 
-
-
-
+    public String getPicEncoded() throws IOException {
+        if(Objects.equals(this.pic, defaultPic)){
+            return defaultPic;
+        }
+        var image = new ImageDisplay();
+        return image.displayImageFromPath(uploadPathItem+ this.pic);
+    }
 
 }

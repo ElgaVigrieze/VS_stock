@@ -15,11 +15,11 @@
                 <thead>
                 <tr>
                     <th>Id</th>
-                    <th>Attēls</th>
                     <th>Kategorija</th>
                     <th>Nosaukums</th>
                     <th>Cena</th>
                     <th>Aktīvs</th>
+                    <th>Garums</th>
                     <th>Pieejamais skaits</th>
                     <th>Atrašanās vieta</th>
                 <tr/>
@@ -47,6 +47,9 @@
                     </td>
                     <td>
                         <input type="checkbox" id="done" name="active" th:checked="${item.isActive()}">
+                    </td>
+                    <td >
+                        <input type="number" name="length"  th:value="${item.getLength() != null} ? ${item.getLength()} : 'null value!'">
                     </td>
                     <td>
                         <input type="number" name="totalCount"  th:value="${item.getTotalCount()}">

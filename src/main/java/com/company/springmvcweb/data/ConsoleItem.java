@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue(value=Category.CatValues.CONSOLE)
 public class ConsoleItem extends Item{
-    public ConsoleItem(int id, String name, Integer price, String pic, boolean isActive, Location location, int totalCount) {
+    public ConsoleItem(int id, String name, Float price, String pic, boolean isActive, Location location, int totalCount) {
         super(id, name, price, pic, isActive, location, totalCount);
     }
 
@@ -22,7 +22,8 @@ public class ConsoleItem extends Item{
         super();
     }
 
-@Override
+
+    @Override
 public String getCategory() {
     return super.getCategory();
 }

@@ -19,8 +19,10 @@ public class StockListItem {
     private int id;
     @Column(name="item_id")
     private int itemId;
+    @Column(name="item_price")
+    private Float itemPrice;
     @Column(name="item_quantity")
-    private int itemQuantity;
+    private Integer itemQuantity;
     @Column(name="item_done")
     private boolean itemDone;
     @ManyToOne(cascade=CascadeType.ALL)

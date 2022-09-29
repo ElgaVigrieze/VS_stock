@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 @DiscriminatorValue(value=Category.CatValues.STAND)
 public class StandItem extends Item{
 
-    public StandItem(int id, String name, Integer price, String pic, boolean isActive, Location location, int totalCount) {
+    public StandItem(int id, String name, Float price, String pic, boolean isActive, Location location, int totalCount) {
         super(id, name, price, pic, isActive, location, totalCount);
     }
 

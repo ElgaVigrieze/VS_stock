@@ -13,6 +13,7 @@ public class ProjectStockListItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+
     @Column(name = "project_id")
     private int projectId;
     @Column(name = "item_id")

@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 
 public class SpeakerItem extends Item{
 
-    public SpeakerItem(int id, String name, Integer price, String pic, boolean isActive, Location location, int totalCount) {
+    public SpeakerItem(int id, String name, Float price, String pic, boolean isActive, Location location, int totalCount) {
         super(id, name, price, pic, isActive, location, totalCount);
     }
 

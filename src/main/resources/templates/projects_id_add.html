@@ -1,41 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:float="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layouts/default">
 <head>
-    <title th:text="${title}"></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link th:href="@{/css/main.css}" rel="stylesheet"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
-            crossorigin="anonymous"></script>
+    <div th:replace="fragments/headerstyle :: mystyle"></div>
 </head>
 <body>
-<div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">
-                <img th:src="@{/img/clip.svg}" alt="Suppliers" width="30">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/projects">Projekti</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/items">Tehnikas saraksts</a>
-                    </li>
-                </ul>
-            </div>
-            <form th:action="@{/logout}" method="post">
-                <input type="submit" value="Izrakstīties" width="30">
-            </form>
-        </div>
-    </nav>
-
+<div th:replace="fragments/header :: myheader"></div>
+    <div class="container">
     <h1 th:text="${title}"></h1>
 
 
@@ -49,22 +21,16 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Nosaukums</th>
                     <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
+                    <th>Pievienot</th>
                 <tr/>
                 </thead>
                 <tbody>
                 <tr th:each="item: ${speakers}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
                     <td th:text="${item.getName()}"/>
                     <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                            <input type="number" name="quantity"></input>
-                    </td>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -78,22 +44,24 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Id</th>
+<!--                    <th>Id</th>-->
                     <th>Nosaukums</th>
                     <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
+<!--                    <th>Daudzums</th>-->
+                    <th>Pievienot</th>
                 <tr/>
                 </thead>
                 <tbody>
                 <tr th:each="item: ${mics}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
+<!--                    <td >-->
+<!--                        <input type="text" readonly  th:value="${item.getId()}" name="id" />-->
+<!--                    </td>-->
                     <td th:text="${item.getName()}"/>
                     <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
+<!--                    <td>-->
+<!--                        <input type="number" name="quantity"></input>-->
+<!--                    </td>-->
+                <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
                 </tr>
                 </tbody>
         </table>
@@ -107,10 +75,9 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Nosaukums</th>
                     <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
+                    <th>Pievienot</th>
                 <tr/>
                 </thead>
                 <tbody>
@@ -120,9 +87,7 @@
                     </td>
                     <td th:text="${item.getName()}"/>
                     <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -136,24 +101,18 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Nosaukums</th>
                     <th>Jauda</th>
                     <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
+                    <th>Pievienot</th>
                 <tr/>
                 </thead>
                 <tbody>
                 <tr th:each="item: ${mspotlights}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
                     <td th:text="${item.getName()}"/>
                     <td th:text="${item.getPower()}"/>
                     <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -167,24 +126,18 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Nosaukums</th>
                     <th>Jauda</th>
                     <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
+                    <th>Pievienot</th>
                 <tr/>
                 </thead>
                 <tbody>
                 <tr th:each="item: ${nmspotlights}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
                     <td th:text="${item.getName()}"/>
                     <td th:text="${item.getPower()}"/>
                     <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -198,140 +151,18 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Nosaukums</th>
                     <th>Jauda</th>
                     <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
+                    <th>Pievienot</th>
                 <tr/>
                 </thead>
                 <tbody>
                 <tr th:each="item: ${lights}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
                     <td th:text="${item.getName()}"/>
                     <td th:text="${item.getPower()}"/>
                     <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            </p>
-        </details>
-        <details>
-            <summary>
-                <h3 th:value="stand">Statīvi</h3>
-            </summary>
-            <p>
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Nosaukums</th>
-                    <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
-                <tr/>
-                </thead>
-                <tbody>
-                <tr th:each="item: ${stands}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
-                    <td th:text="${item.getName()}"/>
-                    <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            </p>
-        </details>
-        <details>
-            <summary>
-                <h3 th:value="cable">Kabeļi</h3>
-            </summary>
-            <p>
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Nosaukums</th>
-                    <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
-                <tr/>
-                </thead>
-                <tbody>
-                <tr th:each="item: ${cables}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
-                    <td th:text="${item.getName()}"/>
-                    <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            </p>
-        </details>
-        <details>
-            <summary>
-                <h3 th:value="truss">Fermas</h3>
-            </summary>
-            <p>
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Nosaukums</th>
-                    <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
-                <tr/>
-                </thead>
-                <tbody>
-                <tr th:each="item: ${trusses}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
-                    <td th:text="${item.getName()}"/>
-                    <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            </p>
-        </details>
-        <details>
-            <summary>
-                <h3 th:value="stage">Skatuves tehnika</h3>
-            </summary>
-            <p>
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Nosaukums</th>
-                    <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
-                <tr/>
-                </thead>
-                <tbody>
-                <tr th:each="item: ${stage}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
-                    <td th:text="${item.getName()}"/>
-                    <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -345,27 +176,114 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Nosaukums</th>
                     <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
+                    <th>Pievienot</th>
                 <tr/>
                 </thead>
                 <tbody>
                 <tr th:each="item: ${video}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
                     <td th:text="${item.getName()}"/>
                     <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
                 </tr>
                 </tbody>
             </table>
             </p>
         </details>
+        <details>
+            <summary>
+                <h3 th:value="stand">Statīvi</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${stands}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="cable">Kabeļi</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${cables}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="truss">Fermas</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${trusses}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="stage">Skatuves tehnika</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${stage}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+
         <details>
             <summary>
                 <h3 th:value="transport">Transports</h3>
@@ -374,22 +292,16 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Nosaukums</th>
                     <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
+                    <th>Pievienot</th>
                 <tr/>
                 </thead>
                 <tbody>
                 <tr th:each="item: ${transport}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
                     <td th:text="${item.getName()}"/>
                     <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -403,22 +315,16 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Nosaukums</th>
                     <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
+                    <th>Pievienot</th>
                 <tr/>
                 </thead>
                 <tbody>
                 <tr th:each="item: ${work}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
                     <td th:text="${item.getName()}"/>
                     <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -432,22 +338,16 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Nosaukums</th>
                     <th>Pieejamais skaits</th>
-                    <th>Daudzums</th>
+                    <th>Pievienot</th>
                 <tr/>
                 </thead>
                 <tbody>
                 <tr th:each="item: ${misc}">
-                    <td >
-                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
-                    </td>
                     <td th:text="${item.getName()}"/>
                     <td th:text="${item.getTotalCount()}"/>
-                    <td>
-                        <input type="number" name="quantity"></input>
-                    </td>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
                 </tr>
                 </tbody>
             </table>

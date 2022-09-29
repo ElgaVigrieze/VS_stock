@@ -8,11 +8,15 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
+import static com.company.springmvcweb.data.Category.getCategoriesPublic;
 import static com.company.springmvcweb.data.Category.valueOfLabel;
 
 public class ItemRepository {
     private static SessionFactory factory;
+
 
     public ItemRepository() {
         try {
@@ -174,4 +178,25 @@ public Object getItem(int id) {
             session.close();
         }
     }
+
+    public ArrayList<Item> sortPerCategory(ArrayList<Item> sortedItems, ArrayList<Item> items) {
+        List<String> categories = getCategoriesPublic();
+        for (var c: categories) {
+            for (var i: items) {
+                if(Objects.equals(i.getCategory(), c)){
+                    sortedItems.add(i);
+                }
+            }
+        }
+        return sortedItems;
+    }
+
+    public Float getProjectSum(ArrayList<Item> items){
+        float sum = 0.00f;
+        for (var i: items) {
+            sum += (i.getPrice())*(i.getQuantity());
+        }
+        return sum;
+    }
+
 }

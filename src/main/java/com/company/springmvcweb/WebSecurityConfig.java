@@ -14,11 +14,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests((requests) -> requests
-                        .antMatchers("/", "/index").permitAll()
+                        .antMatchers("/", "/index","/css/**","/img/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
@@ -34,8 +35,8 @@ public class WebSecurityConfig {
     public UserDetailsService userDetailsService() {
         UserDetails user =
                 User.withDefaultPasswordEncoder()
-                        .username("vsystem")
-                        .password("1Very$ecurePW")
+                        .username("VSys")
+                        .password("Pword#13")
                         .roles("USER")
                         .build();
 

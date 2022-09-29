@@ -12,7 +12,7 @@ public class CableItem extends Item{
     public CableItem() {
     }
 
-    public CableItem(int id, String name, Integer price, String pic, boolean isActive, Location location, int totalCount) {
+    public CableItem(int id, String name, Float price, String pic, boolean isActive, Location location, int totalCount) {
         super(id, name, price, pic, isActive, location, totalCount);
     }
 

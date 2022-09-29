@@ -11,16 +11,12 @@ public class ItemSaveDto {
     private String category;
     private int id;
     private String name;
-    private int price;
+    private Float price;
     private String pic;
     private Location location;
     private int totalCount;
-    private int power;
-    private int length;
+    private Float power;
+    private Integer length;
     private boolean isActive;
 
-
-//    public Category getCategory() {
-//        return Category.valueOfLabel(category);
-//    }
 }

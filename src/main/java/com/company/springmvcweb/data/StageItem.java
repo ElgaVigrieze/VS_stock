@@ -11,7 +11,7 @@ import javax.persistence.*;
 @DiscriminatorValue(value=Category.CatValues.STAGE)
 public class StageItem extends Item{
 
-    public StageItem(int id, String name, Integer price, String pic, boolean isActive, Location location, int totalCount) {
+    public StageItem(int id, String name, Float price, String pic, boolean isActive, Location location, int totalCount) {
         super(id, name, price, pic, isActive, location, totalCount);
     }
 

@@ -1,6 +1,5 @@
 package com.company.springmvcweb.data;
 
-import com.company.springmvcweb.dto.ProjectSaveDto;
 import lombok.NonNull;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
@@ -101,13 +100,7 @@ public Object getProject(int id) {
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            var sql = "Update StockListItem set item_done = :item_done where item_id=:item_id and project_id=:project_id";
-            var query = session.createQuery(sql);
             StockListItem stockItem = (StockListItem) getStockListItem(itemId,projectId);
-            query.setParameter("project_id", projectId);
-            query.setParameter("item_id", itemId);
-            query.setParameter("item_done", done);
-
             stockItem.setItemDone(done);
             session.update(stockItem);
             tx.commit();
@@ -120,18 +113,18 @@ public Object getProject(int id) {
             session.close();
         }
     }
-    public void updateStockListItemQuantity(int itemId, int projectId,int quantity) {
+    public void updateStockListItemQuantityOrPrice(int itemId, int projectId,Integer quantity, Float price) {
         var session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            var sql = "Update StockListItem set item_quantity = :item_quantity where item_id=:item_id and project_id=:project_id";
-            var query = session.createQuery(sql);
             StockListItem stockItem = (StockListItem) getStockListItem(itemId,projectId);
-            query.setParameter("project_id", projectId);
-            query.setParameter("item_id", itemId);
-            query.setParameter("item_quantity", quantity);
-            stockItem.setItemQuantity(quantity);
+            if(price!=null) {
+                stockItem.setItemPrice(price);
+            }
+            if(quantity != null){
+                    stockItem.setItemQuantity(quantity);
+                }
             session.update(stockItem);
             tx.commit();
         } catch (HibernateException exception) {
@@ -158,9 +151,9 @@ public Object getProject(int id) {
         return projectId ;
     }
 
-    public void addStockListItem(Project project, int itemId, int quantity) {
+    public void addStockListItem(Project project, int itemId, float itemPrice, int quantity) {
         var session = factory.openSession();
-        var stockItem = new StockListItem(0,itemId,quantity,false, project);
+        var stockItem = new StockListItem(0,itemId,itemPrice,quantity,false, project);
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
@@ -185,9 +178,27 @@ public Object getProject(int id) {
             var query = session.createQuery(sql);
             query.setParameter("project_id", projectId);
             query.setParameter("item_id", itemId);
-//            StockListItem stockItem = (StockListItem) getStockListItem(itemId,projectId);
             query.executeUpdate();
-//            session.delete(stockItem);
+            tx.commit();
+        }catch (HibernateException ex){
+            if(tx != null){
+                tx.rollback();
+            }
+            System.err.println(ex);
+        }finally{
+            session.close();
+        }
+    }
+
+    public void deleteStockListItemsByProject(int projectId){
+        var session = factory.openSession();
+        Transaction tx = null;
+        try{
+            tx = session.beginTransaction();
+            var sql = "Delete from StockListItem where project_id=:project_id";
+            var query = session.createQuery(sql);
+            query.setParameter("project_id", projectId);
+            query.executeUpdate();
             tx.commit();
         }catch (HibernateException ex){
             if(tx != null){
@@ -219,7 +230,6 @@ public Object getProject(int id) {
     public void updateProject(@NonNull Object item) {
         var session = factory.openSession();
         Transaction tx = null;
-
         try {
             tx = session.beginTransaction();
             session.update(item);

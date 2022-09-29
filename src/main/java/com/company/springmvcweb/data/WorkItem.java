@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 @DiscriminatorValue(value=Category.CatValues.WORK)
 public class WorkItem extends Item{
 
-    public WorkItem(int id, String name, Integer price, String pic, boolean isActive, Location location, int totalCount) {
+    public WorkItem(int id, String name, Float price, String pic, boolean isActive, Location location, int totalCount) {
         super(id, name, price, pic, isActive, location, totalCount);
     }
 

@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 @DiscriminatorValue(value=Category.CatValues.TRANSPORT)
 public class TransportItem extends Item{
 
-    public TransportItem(int id, String name, Integer price, String pic, boolean isActive, Location location, int totalCount) {
+    public TransportItem(int id, String name, Float price, String pic, boolean isActive, Location location, int totalCount) {
         super(id, name, price, pic, isActive, location, totalCount);
     }
 

@@ -14,13 +14,13 @@ import javax.persistence.Entity;
 
 public class MSpotlight extends Item{
 //@Column(name="power")
-    private int power;
+    private Float power;
 
-    public MSpotlight(int power) {
+    public MSpotlight(Float power) {
         this.power = power;
     }
 
-    public MSpotlight(int id, String name, Integer price, String pic, boolean isActive, Location location, int totalCount, int power) {
+    public MSpotlight(int id, String name, Float price, String pic, boolean isActive, Location location, int totalCount, Float power) {
         super(id, name, price, pic, isActive, location, totalCount);
         this.power = power;
     }

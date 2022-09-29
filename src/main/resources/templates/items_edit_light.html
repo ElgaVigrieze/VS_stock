@@ -20,6 +20,7 @@
                     <th>Nosaukums</th>
                     <th>Cena</th>
                     <th>Aktīvs</th>
+                    <th>Jauda</th>
                     <th>Pieejamais skaits</th>
                     <th>Atrašanās vieta</th>
                 <tr/>
@@ -47,6 +48,9 @@
                     </td>
                     <td>
                         <input type="checkbox" id="done" name="active" th:checked="${item.isActive()}">
+                    </td>
+                    <td >
+                        <input type="number" step="0.1" name="power"  th:value="${item.getPower() != null} ? ${item.getPower()} : 'null value!'">
                     </td>
                     <td>
                         <input type="number" name="totalCount"  th:value="${item.getTotalCount()}">
