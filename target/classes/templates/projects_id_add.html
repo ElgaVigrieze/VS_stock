@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:float="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layouts/default">
+<head>
+    <div th:replace="fragments/headerstyle :: mystyle"></div>
+</head>
+<body>
+<div th:replace="fragments/header :: myheader"></div>
+    <div class="container">
+    <h1 th:text="${title}"></h1>
+
+
+
+    <form method="post" th:action="${'/projects/'+projectId+'/add'}" name="itemSaveDto">
+        <details>
+            <summary>
+                <h3 th:value="speaker">Tumbas</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${speakers}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="mic">Mikrofoni</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+<!--                    <th>Id</th>-->
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+<!--                    <th>Daudzums</th>-->
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${mics}">
+<!--                    <td >-->
+<!--                        <input type="text" readonly  th:value="${item.getId()}" name="id" />-->
+<!--                    </td>-->
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+<!--                    <td>-->
+<!--                        <input type="number" name="quantity"></input>-->
+<!--                    </td>-->
+                <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+        </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="console">Pultis</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${consoles}">
+                    <td >
+                        <input type="text" readonly  th:value="${item.getId()}" name="id" />
+                    </td>
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="mspotlight">Kustīgie prožektori</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Jauda</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${mspotlights}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getPower()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="nmspotlight">Fiksētie prožektori</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Jauda</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${nmspotlights}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getPower()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="lights">Gaismu tehnika</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Jauda</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${lights}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getPower()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="video" >Video tehnika</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${video}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="stand">Statīvi</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${stands}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="cable">Kabeļi</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${cables}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="truss">Fermas</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${trusses}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="stage">Skatuves tehnika</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${stage}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+
+        <details>
+            <summary>
+                <h3 th:value="transport">Transports</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${transport}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="work">Darbs</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${work}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <details>
+            <summary>
+                <h3 th:value="misc">Citi</h3>
+            </summary>
+            <p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Nosaukums</th>
+                    <th>Pieejamais skaits</th>
+                    <th>Pievienot</th>
+                <tr/>
+                </thead>
+                <tbody>
+                <tr th:each="item: ${misc}">
+                    <td th:text="${item.getName()}"/>
+                    <td th:text="${item.getTotalCount()}"/>
+                    <td><input type="checkbox" name="check" th:value="${item.getId()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </details>
+        <button type="submit" class="btn btn-success">Izvēlēties</button>
+    </form>
+</div>
+</body>
+</html>
