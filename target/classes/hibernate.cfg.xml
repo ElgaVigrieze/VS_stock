@@ -19,16 +19,12 @@
         </property>
 
         <property name = "hibernate.connection.username">
-            VSys
+            VSysAdmin
         </property>
 
         <property name = "hibernate.connection.password">
-            VS
+            $pecialAP2
         </property>
-
-
-
-
 
     </session-factory>
 </hibernate-configuration>

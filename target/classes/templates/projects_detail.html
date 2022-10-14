@@ -52,6 +52,7 @@
         <a th:href="${'/projects/'+projectId+'/confirm'}" class="btn btn-danger" role="button">Dzēst projektu</a>
         <a th:href="${'/projects/'+projectId+'/add'}" class="btn btn-success" role="button">Pievienot tehniku</a>
         <a th:href="${'/projects/'+projectId+'/list/edit'}" class="btn btn-secondary" role="button">Rediģēt sarakstu</a>
+        <a th:target="_blank" th:href="${'/stocklist/'+projectId+'/preview'}" class="btn btn-secondary" role="button">Eksportēt PDF</a>
         <a th:href="${'/projects/'+projectId+'/gallery'}" class="btn btn-secondary" role="button">Galerija</a>
         <a th:href="${'/projects/'}" class="btn btn-secondary" role="button">Atpakaļ</a>
         <header ><h2 th:text="'Kopsumma: ' + ${sum} + ' EUR / '+${sumVat} + ' EUR'" > </h2></header>
