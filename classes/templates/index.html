@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:float="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layouts/default">
+<head>
+    <div th:replace="fragments/headerstyle :: mystyle"></div>
+</head>
+<body>
+<div th:replace="fragments/header :: myheader"></div>
+    <div class="container" >
+        <h1>VentSystem.lv noliktavas uzskaites sistēma</h1>
+        <a href="/new_item">
+            <button class ="button1"  >
+                <h4>Pievienot<br>tehnikas<br>vienību</h4>
+
+                <img th:src="@{/img/forward.svg}" alt="Forward" float="right" width="30">
+            </button>
+        </a>
+
+        <a href="/new_project">
+            <button class ="button1"  >
+                <h4>Izveidot<br>jaunu<br>projektu<br></h4>
+
+                <img th:src="@{/img/forward.svg}" alt="Forward" float="right" width="30">
+            </button>
+        </a>
+
+        <!--        <a href="/new_supplier">-->
+        <!--            <button class="button1"  >-->
+        <!--                <h4>Add a<br>new<br>supplier<br></h4>-->
+
+        <!--                <img th:src="@{/img/forward.svg}" alt="Forward" float="right" width="30">-->
+        <!--            </button>-->
+        <!--        </a>-->
+
+<!--        <a href="/items">-->
+<!--            <button class="button2"  >-->
+<!--                <h4>Apskatīt<br>visu<br>tehniku<br></h4>-->
+
+<!--                <img th:src="@{/img/up.svg}" alt="Forward" float="right" width="30">-->
+<!--            </button>-->
+<!--        </a>-->
+
+        <a href="/projects">
+            <button class="button2"  >
+                <h4>Apskatīt<br>visus<br>projektus</h4>
+
+                <img th:src="@{/img/up.svg}" alt="Forward" float="right" width="30">
+            </button>
+        </a>
+
+        <!--        <a href="/suppliers">-->
+        <!--            <button class="button3"  >-->
+        <!--                <h4>View critical<br>indicators<br></h4>-->
+
+        <!--                <img th:src="@{/img/up.svg}" alt="Forward" float="right" width="30">-->
+        <!--            </button>-->
+        <!--        </a>-->
+
+
+
+
+    </div>
+
+</div>
+</body>
+</html>
