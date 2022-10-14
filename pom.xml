@@ -59,6 +59,16 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>ognl</groupId>
+            <artifactId>ognl</artifactId>
+            <version>3.3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-pdf</artifactId>
+            <version>9.1.22</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -73,6 +83,12 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.4.13.Final</version>
         </dependency>
+        <dependency>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-pdf</artifactId>
+            <version>9.1.22</version>
+        </dependency>
+
 <!--        <dependency>-->
 <!--            <groupId>com.github.zhanhb</groupId>-->
 <!--            <artifactId>thymeleaf-layout-dialect</artifactId>-->
