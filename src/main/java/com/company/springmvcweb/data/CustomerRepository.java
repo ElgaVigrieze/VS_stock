@@ -1,44 +1,41 @@
 package com.company.springmvcweb.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NonNull;
+import com.company.springmvcweb.data.Items.Item;
+import com.company.springmvcweb.data.project.StockListItem;
+import com.company.springmvcweb.data.invoice.Invoice;
+import com.company.springmvcweb.data.project.Project;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import java.util.ArrayList;
 
-@Entity
-@Data
-@AllArgsConstructor
-public class Message {
-    @Id
-    @Column(name = "id", nullable = false)
-    private int id;
-    @Column(name="text")
-    private String text;
+public class CustomerRepository {
     private static SessionFactory factory;
 
-    public Message() {
+
+    public CustomerRepository() {
         try {
             factory = new Configuration().
                     configure().
-                    addAnnotatedClass(Message.class).
+                    addAnnotatedClass(Invoice.class).
+                    addAnnotatedClass(Customer.class).
+                    addAnnotatedClass(Project.class).
+                    addAnnotatedClass(StockListItem.class).
+                    addAnnotatedClass(Item.class).
                     buildSessionFactory();
-
         } catch (Throwable ex) {
             System.err.println("Failed to create sessionFactory object." + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
-    public Object getMessage(int id){
+
+
+    public Object getCustomer(long id) {
+
         try (var session = factory.openSession()) {
 
-            var sql = "FROM Message where id = :id";
+            var sql = "FROM Customer where id = :id";
             var query = session.createQuery(sql);
             query.setParameter("id", id);
 
@@ -51,21 +48,20 @@ public class Message {
         return null;
     }
 
-    public void updateMessage(@NonNull Object item) {
+
+    public Iterable<Customer> getCustomers() {
         var session = factory.openSession();
-        Transaction tx = null;
+
         try {
-            tx = session.beginTransaction();
-            session.update(item);
-            tx.commit();
+            return session.createQuery("FROM Customer").list();
         } catch (HibernateException exception) {
-            if(tx != null) {
-                tx.rollback();
-            }
             System.err.println(exception);
         } finally {
             session.close();
         }
+        return new ArrayList<>();
     }
+
+
 
 }

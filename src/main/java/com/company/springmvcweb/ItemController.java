@@ -1,6 +1,10 @@
 package com.company.springmvcweb;
 
 import com.company.springmvcweb.data.*;
+import com.company.springmvcweb.data.Items.Item;
+import com.company.springmvcweb.data.enums.Category;
+import com.company.springmvcweb.data.enums.Location;
+import com.company.springmvcweb.data.utilities.ImageDisplay;
 import com.company.springmvcweb.dto.ItemCatDto;
 import com.company.springmvcweb.dto.ItemSaveDto;
 import org.springframework.stereotype.Controller;
@@ -19,10 +23,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static com.company.springmvcweb.data.Category.CatValues.*;
-import static com.company.springmvcweb.data.Category.valueOfLabel;
-import static com.company.springmvcweb.data.ImageDisplay.defaultPic;
-import static com.company.springmvcweb.data.ImageDisplay.uploadPathItem;
+import static com.company.springmvcweb.data.enums.Category.CatValues.*;
+import static com.company.springmvcweb.data.enums.Category.valueOfLabel;
+import static com.company.springmvcweb.data.utilities.ImageDisplay.defaultPic;
+import static com.company.springmvcweb.data.utilities.ImageDisplay.uploadPathItem;
 
 
 @Controller
@@ -77,12 +81,12 @@ public class ItemController {
     }
 
     @GetMapping("/items/{id}/upload")
-    public String uploadPic1 (@PathVariable int id) throws IOException {
+    public String uploadPic1 (@PathVariable long id) throws IOException {
         return "items_edit_upload";
     }
 
     @PostMapping("/items/{id}/upload")
-    public ModelAndView uploadPic (@RequestParam("file") MultipartFile file, @PathVariable int id) throws IOException {
+    public ModelAndView uploadPic (@RequestParam("file") MultipartFile file, @PathVariable long id) throws IOException {
         if(!Objects.equals(file.getOriginalFilename(), "")){
             String filename=file.getOriginalFilename();
             String newPath = uploadPathItem+filename;
@@ -133,7 +137,7 @@ public class ItemController {
     }
 
     @GetMapping("/items/{id}")
-    public String editItem(@PathVariable int id, Model model) throws IOException, ServletException {
+    public String editItem(@PathVariable long id, Model model) throws IOException, ServletException {
         var item = (Item)repo.getItem(id);
        var categories = Category.getCategoriesPublic();
         List<Location> locations = Arrays.asList(Location.values());
@@ -166,7 +170,7 @@ public class ItemController {
     }
 
     @PostMapping("/items/{id}")
-    public ModelAndView editItemSave(@PathVariable int id, ItemSaveDto dto, Model model) {
+    public ModelAndView editItemSave(@PathVariable long id, ItemSaveDto dto, Model model) {
         List<String> categories = Category.getCategoriesPublic();
         var item = (Item) repo.getItem(id);
         var pic = "";

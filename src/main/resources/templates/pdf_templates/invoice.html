@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:float="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layouts/default">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+        footer, h1{text-align: right;}
+        th{text-align:left;}
+    </style>
+    <style type='text/css'>
+    * { font-family: Verdana; }
+                #vertical thead,#vertical tbody{
+                display:inline-block;}
+       </style>
+
+</head>
+<body>
+<div th:replace="pdf_header_invoice :: pdfheader"></div>
+<div>
+<table id="vertical">
+    <tr>
+        <th>Izpildītājs: </th>
+        <td>SIA "VentSystem.lv"</td>
+    </tr>
+    <tr>
+        <th>Adrese: </th>
+        <td>Lielais prospekts 18–11, Ventspils, LV-3601</td>
+    </tr>
+    <tr>
+        <th>Reģistrācijas Nr.: </th>
+        <td>LV41203041233</td>
+    </tr>
+    <tr>
+        <th>Norēķinu rekvizīti: </th>
+        <td>A/S "Swedbank"</td>
+    </tr>
+    <tr>
+        <th>Konta Nr.: </th>
+        <td>LV51HABA0551031251238</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <th>Pasūtītājs: </th>
+        <td th:text="${invoice.getCustomer().getName()}"/>
+    </tr>
+    <tr>
+        <th>Adrese: </th>
+        <td th:text="${invoice.getCustomer().getBillingAddress()}"/>
+    </tr>
+    <tr>
+        <th>Reģistrācijas Nr.: </th>
+        <td th:text="${invoice.getCustomer().getVatNumber()}"/>
+    </tr>
+    <tr>
+        <th>Norēķinu rekvizīti: </th>
+        <td th:text="${invoice.getCustomer().getBank()}"/>
+    </tr>
+    <tr>
+        <th>Konta Nr.: </th>
+        <td th:text="${invoice.getCustomer().getAccountNumber()}"/>
+    </tr>
+    <tfoot text="Apmaksas veids: pārskaitījums"/>
+    <tfoot th:text="'Apmaksas termiņš: '+${invoice.getDate()}"/>
+    <tfoot>Maksājuma pamatojums</tfoot>
+</table>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Nosaukums</th>
+        <th>Daudzums</th>
+        <th>Cena</th>
+        <th>Summa</th>
+    <tr/>
+    </thead>
+    <tbody>
+    <tr th:each="invoice: ${invoices}">
+        <td th:text="${invoice.getDescription()}"/>
+        <td th:text="daudz"/>
+        <td th:text="nedaudz"/>
+        <td th:text="${invoice.getSum()}"/>
+    </tr>
+    </tbody>
+    <footer th:text="'Summa: '"/>
+    <footer th:text="'PVN 21%: '"/>
+    <footer style="bold" th:text="'Kopā: '"/>
+</table>
+</div>
+<div> Rēķins ir sagatavots elektroniski un ir derīgs bez paraksta</div>
+</body>
+</html>

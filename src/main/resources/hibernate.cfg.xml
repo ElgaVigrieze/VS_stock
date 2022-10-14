@@ -26,9 +26,5 @@
             VS
         </property>
 
-
-
-
-
     </session-factory>
 </hibernate-configuration>

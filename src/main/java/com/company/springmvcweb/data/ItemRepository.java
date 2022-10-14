@@ -1,5 +1,7 @@
 package com.company.springmvcweb.data;
 
+import com.company.springmvcweb.data.Items.*;
+import com.company.springmvcweb.data.enums.Category;
 import com.company.springmvcweb.dto.ItemSaveDto;
 import lombok.NonNull;
 import org.hibernate.HibernateException;
@@ -11,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.company.springmvcweb.data.Category.getCategoriesPublic;
-import static com.company.springmvcweb.data.Category.valueOfLabel;
+import static com.company.springmvcweb.data.enums.Category.getCategoriesPublic;
+import static com.company.springmvcweb.data.enums.Category.valueOfLabel;
 
 public class ItemRepository {
     private static SessionFactory factory;
@@ -45,7 +47,7 @@ public class ItemRepository {
         }
     }
 
-public Object getItem(int id) {
+public Object getItem(long id) {
 
         try (var session = factory.openSession()) {
 
@@ -112,7 +114,7 @@ public Object getItem(int id) {
 
 
 
-    public Integer addItem(ItemSaveDto dto) {
+    public Long addItem(ItemSaveDto dto) {
         switch(valueOfLabel(dto.getCategory())){
             case STAND -> { return addItem(new StandItem(0,dto.getName(),dto.getPrice(), dto.getPic(),true, dto.getLocation(), dto.getTotalCount()));
             }
@@ -143,16 +145,16 @@ public Object getItem(int id) {
             case MISC -> { return addItem(new MiscItem(0,dto.getName(), dto.getPrice(), dto.getPic(), true, dto.getLocation(), dto.getTotalCount()));
             }
         }
-        return 0;
+        return 0L;
     }
 
 
-    public Integer addItem(@NonNull Item item){
+    public Long addItem(@NonNull Item item){
         var session = factory.openSession();
-        Integer itemId = null;
+        Long itemId = null;
 
         try{
-            itemId = (Integer)session.save(item);
+            itemId = (Long)session.save(item);
         }catch (HibernateException ex){
             System.err.println(ex);
         }finally{

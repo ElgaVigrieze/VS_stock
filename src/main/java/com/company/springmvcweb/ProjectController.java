@@ -1,20 +1,28 @@
 package com.company.springmvcweb;
 
 import com.company.springmvcweb.data.*;
-import com.company.springmvcweb.dto.*;
+import com.company.springmvcweb.data.Items.Item;
+import com.company.springmvcweb.data.enums.Category;
+import com.company.springmvcweb.data.project.Project;
+import com.company.springmvcweb.data.utilities.PdfFileExporter;
+import com.company.springmvcweb.dto.ItemSaveDto2;
+import com.company.springmvcweb.dto.ProjectSaveDto;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static com.company.springmvcweb.data.ImageDisplay.uploadPathProject;
+import static com.company.springmvcweb.data.utilities.ImageDisplay.displayImageFromPath;
+import static com.company.springmvcweb.data.utilities.ImageDisplay.uploadPathProject;
+import static com.company.springmvcweb.data.utilities.PreparePdfData.setPdfDataStocklist;
 
 
 @Controller
@@ -22,6 +30,7 @@ public class ProjectController {
 
     private ItemRepository repo;
     private ProjectRepository repo1;
+
 
 
     public ProjectController() {
@@ -32,6 +41,7 @@ public class ProjectController {
     @GetMapping("/projects")
     public String viewProjects(Model model) {
         var projects = repo1.getProjects();
+//        var projects = repo1.findAll();
         model.addAttribute("title", "Pasākumi");
         model.addAttribute("projects", projects);
         return "projects";
@@ -53,44 +63,63 @@ public class ProjectController {
     }
 
     @PostMapping("/msgboard")
-    public ModelAndView saveMessageBoard(Model model, @RequestParam String text) {
+    public ModelAndView saveMessageBoard(@RequestParam String text) {
         var m = new Message();
         m.updateMessage(new Message(1,text));
         return new ModelAndView("redirect:/msgboard");
     }
 
     @GetMapping("/projects/{projectId}")
-    public String viewProject(@PathVariable int projectId,Model model) {
+    public String viewProject(@PathVariable long projectId,Model model) {
         var project = (Project)repo1.getProject(projectId);
-        var stockItems = repo1.getStockListItems(project);
-        var items = new ArrayList<Item>();
-        for (var i: stockItems) {
-            var it = (Item)repo.getItem(i.getItemId());
-            items.add(new Item(it.getId(), it.getName(), it.getPic(), it.getPrice(), it.getTotalCount(),i.getItemQuantity(),i.getItemPrice(),it.getCategory(),i.isItemDone()));
-}
-        var sortedItems = new ArrayList<Item>();
-        sortedItems = repo.sortPerCategory(sortedItems, items);
-        var sum = repo.getProjectSum(sortedItems);
-        model.addAttribute("title", project.getTitle());
+        var sortedItems = repo1.getStockListItemsSorted(project);
+        var sum = String.format("%.2f",repo.getProjectSum(sortedItems));
+        var sumVat  = String.format("%.2f",repo.getProjectSum(sortedItems)*1.21);
+        var title = project.getTitle();
+
+        model.addAttribute("title", title);
         model.addAttribute("items", sortedItems);
         model.addAttribute("project", project);
-        model.addAttribute("sum", String.format("%.2f",sum));
-        model.addAttribute("sumVat", String.format("%.2f",sum*1.21));
+        model.addAttribute("sum", sum);
+        model.addAttribute("sumVat", sumVat);
 
         return "projects_detail";
     }
 
+    @GetMapping("/stocklist/{projectId}/preview")
+public ResponseEntity<InputStreamResource> viewPdf(Model model, @PathVariable long projectId) throws IOException {
+    var project = (Project)repo1.getProject(projectId);
+    var sortedItems = repo1.getStockListItemsSorted(project);
+    var sum = String.format("%.2f",repo.getProjectSum(sortedItems));
+    var sumVat  = String.format("%.2f",repo.getProjectSum(sortedItems)*1.21);
+    var title = project.getTitle();
+
+    model.addAttribute("title", title);
+    model.addAttribute("items", sortedItems);
+    model.addAttribute("project", project);
+    model.addAttribute("sum", sum);
+    model.addAttribute("sumVat", sumVat);
+
+    PdfFileExporter pdfFileExporter = new PdfFileExporter();
+    Map<String, Object> data = setPdfDataStocklist(projectId);
+    String pdfFileName = "C:\\jar\\pdf\\offers\\offer_"+title+".pdf";
+
+        return pdfFileExporter.showPdfFilePreview("stocklist", data, pdfFileName);
+    }
+
+
     @GetMapping("/projects/{projectId}/confirm")
-    public String deleteProjectConfirm(@PathVariable int projectId,Model model) {
+    public String deleteProjectConfirm(@PathVariable long projectId,Model model) {
         var project = (Project)repo1.getProject(projectId);
         model.addAttribute("title", "Projekts " + project.getTitle());
         model.addAttribute("project", project);
         model.addAttribute("confirmDelete", project);
+
         return "projects_detail";
     }
 
     @GetMapping("/projects/{projectId}/delete")
-    public ModelAndView deleteProject (@PathVariable int projectId) {
+    public ModelAndView deleteProject (@PathVariable long projectId) {
         var project = (Project)repo1.getProject(projectId);
         if(repo1.getStockListItems(project) != null){
             repo1.deleteStockListItemsByProject(projectId);
@@ -100,7 +129,7 @@ public class ProjectController {
     }
 
     @GetMapping("/projects/{projectId}/update")
-    public String updateProject (@PathVariable int projectId, Model model) {
+    public String updateProject (@PathVariable long projectId, Model model) {
         var project = (Project)repo1.getProject(projectId);
         model.addAttribute("projectId",projectId);
         model.addAttribute("project", project);
@@ -108,7 +137,7 @@ public class ProjectController {
         return "projects_id_update";
     }
     @PostMapping("/projects/{projectId}/update")
-    public ModelAndView updateProjectSave (@PathVariable int projectId, ProjectSaveDto dto, Model model) {
+    public ModelAndView updateProjectSave (@PathVariable long projectId, ProjectSaveDto dto, Model model) {
         var project = (Project) repo1.getProject(projectId);
         model.addAttribute("projectId", projectId);
         model.addAttribute("project", project);
@@ -145,16 +174,9 @@ public class ProjectController {
     }
 
     @GetMapping("/projects/{projectId}/list/edit")
-    public String editProjectList(@PathVariable int projectId,Model model) {
+    public String editProjectList(@PathVariable long projectId,Model model) {
         var project = (Project)repo1.getProject(projectId);
-        var stockItems = repo1.getStockListItems(project);
-        var items = new ArrayList<Item>();
-        for (var i: stockItems) {
-            var it = (Item)repo.getItem(i.getItemId());
-            items.add(new Item(it.getId(), it.getName(), it.getPic(), it.getPrice(), it.getTotalCount(), i.getItemQuantity(),i.getItemPrice(),it.getCategory(),i.isItemDone()));
-        }
-        var sortedItems = new ArrayList<Item>();
-        sortedItems = repo.sortPerCategory(sortedItems,items);
+        var sortedItems = repo1.getStockListItemsSorted(project);
         var sum = repo.getProjectSum(sortedItems);
         model.addAttribute("title", project.getTitle());
         model.addAttribute("items", sortedItems);
@@ -163,17 +185,29 @@ public class ProjectController {
         return "projects_stock_list_edit";
     }
 
-    @PostMapping("/projects/{projectId}/list/edit")
-    public ModelAndView editProjectListPost(@PathVariable int projectId,@ModelAttribute ItemSaveDto2 dto, Model model) {
+    @GetMapping("/stocklist/{projectId}")
+    public ModelAndView stocklistTemplate(@PathVariable long projectId,Model model){
         var project = (Project)repo1.getProject(projectId);
+        var sortedItems = repo1.getStockListItemsSorted(project);
+        var sum = String.format("%.2f",repo.getProjectSum(sortedItems));
+        var sumVat = String.format("%.2f",(repo.getProjectSum(sortedItems)*1.21));
+        var title = project.getTitle();
+
+        model.addAttribute("title", title);
+        model.addAttribute("items", sortedItems);
+        model.addAttribute("sum", sum);
+        model.addAttribute("sumVat", sumVat);
+
+        return new ModelAndView("redirect:/projects/{projectId}");
+    }
+
+
+
+    @PostMapping("/projects/{projectId}/list/edit")
+    public ModelAndView editProjectListPost(@PathVariable long projectId, @ModelAttribute ItemSaveDto2 dto, Model model) {
+        var project = (Project)repo1.getProject(projectId);
+        var sortedItems = repo1.getStockListItemsSorted(project);
         var stockItems = repo1.getStockListItems(project);
-        var items = new ArrayList<Item>();
-        for (var i: stockItems) {
-            var it = (Item)repo.getItem(i.getItemId());
-            items.add(new Item(it.getId(), it.getName(), it.getPic(), it.getPrice(), it.getTotalCount(), i.getItemQuantity(),i.getItemPrice(),it.getCategory(),i.isItemDone()));
-        }
-        var sortedItems = new ArrayList<Item>();
-        sortedItems = repo.sortPerCategory(sortedItems,items);
         var qties = dto.getQuantity();
         var prices = dto.getPrice();
         for (int i = 0; i < qties.size(); i++) {
@@ -205,7 +239,7 @@ public class ProjectController {
     }
 
     @GetMapping("/projects/{projectId}/list/delete/{id}")
-    public ModelAndView deleteItemFromProjectList(@PathVariable int projectId, @PathVariable int id, Model model) {
+    public ModelAndView deleteItemFromProjectList(@PathVariable long projectId, @PathVariable long id, Model model) {
         var project = (Project)repo1.getProject(projectId);
         repo1.deleteStockListItem(id,projectId);
         model.addAttribute("title", "Projekts "+project.getTitle());
@@ -214,7 +248,7 @@ public class ProjectController {
     }
 
     @GetMapping("/projects/{projectId}/add")
-    public String newProject(@PathVariable int projectId, Model model) {
+    public String newProject(@PathVariable long projectId, Model model) {
         var speakers = repo.getItemsPerCategory(Category.CatValues.SPEAKER);
         var mics =  repo.getItemsPerCategory(Category.CatValues.MIC);
         var consoles =  repo.getItemsPerCategory(Category.CatValues.CONSOLE);
@@ -248,7 +282,7 @@ public class ProjectController {
     }
 
     @PostMapping("/projects/{projectId}/add")
-    public ModelAndView newProjectQuantities(@PathVariable int projectId, @RequestParam String check, Model model) {
+    public ModelAndView newProjectQuantities(@PathVariable long projectId, @RequestParam String check, Model model) {
         var project = (Project)repo1.getProject(projectId);
         var addItems = Arrays.asList(check.split(","));
         var items = new ArrayList<Item>();
@@ -280,14 +314,13 @@ public class ProjectController {
     }
 
     @GetMapping("/projects/{id}/gallery")
-    public String gallery(@PathVariable int id, Model model) throws IOException {
+    public String gallery(@PathVariable long id, Model model) throws IOException {
         var p = (Project)repo1.getProject(id);
         if(p.getPics() != null){
             String[] picArray = p.getPics().split(";");
            ArrayList<String> pics= new ArrayList<>();
             for (var pic: picArray) {
-                var image = new ImageDisplay();
-                    pics.add(image.displayImageFromPath(uploadPathProject+pic));
+                    pics.add(displayImageFromPath(uploadPathProject+pic));
                 System.out.println(uploadPathProject+pic);
             }
             model.addAttribute("pics",pics);
@@ -298,7 +331,7 @@ public class ProjectController {
     }
 
     @PostMapping("/projects/{id}/gallery")
-    public ModelAndView uploadGallery (@RequestParam("file") MultipartFile[] files, @PathVariable int id) throws IOException {
+    public ModelAndView uploadGallery (@RequestParam("file") MultipartFile[] files, @PathVariable long id) throws IOException {
         var p = (Project)repo1.getProject(id);
         var filePaths = "";
         if(p.getPics()== null){
@@ -328,7 +361,7 @@ public class ProjectController {
     }
 
     @PostMapping("/projects/{id}/gallery/{picId}")
-    public ModelAndView uploadGallery (@PathVariable int id, @PathVariable int picId) {
+    public ModelAndView uploadGallery (@PathVariable long id, @PathVariable int picId) {
        var p = (Project)repo1.getProject(id);
        String[] pics = p.getPics().split(";");
        String newPics="";

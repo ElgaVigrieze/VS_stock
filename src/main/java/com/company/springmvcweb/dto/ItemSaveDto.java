@@ -1,10 +1,7 @@
 package com.company.springmvcweb.dto;
 
-import com.company.springmvcweb.data.Category;
-import com.company.springmvcweb.data.Location;
+import com.company.springmvcweb.data.enums.Location;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class ItemSaveDto {

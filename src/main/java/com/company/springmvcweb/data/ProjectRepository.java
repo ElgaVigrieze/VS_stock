@@ -1,7 +1,12 @@
 package com.company.springmvcweb.data;
 
+import com.company.springmvcweb.data.Items.Item;
+import com.company.springmvcweb.data.project.StockListItem;
+import com.company.springmvcweb.data.project.Project;
 import lombok.NonNull;
-import org.hibernate.*;
+import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 import java.util.ArrayList;
@@ -23,7 +28,7 @@ public class ProjectRepository {
         }
     }
 
-public Object getProject(int id) {
+public Object getProject(Long id) {
         try (var session = factory.openSession()) {
 
             var sql = "FROM Project where id = :id";
@@ -41,7 +46,7 @@ public Object getProject(int id) {
 
 
 
-    public Iterable<Item> getProjects() {
+    public Iterable<Project> getProjects() {
         var session = factory.openSession();
 
         try {
@@ -54,7 +59,7 @@ public Object getProject(int id) {
         return new ArrayList<>();
     }
 
-    public Object getStockListItem(int itemId, int projectId) {
+    public Object getStockListItem(long itemId, long projectId) {
         var session = factory.openSession();
 
         try {
@@ -95,7 +100,37 @@ public Object getProject(int id) {
         return new ArrayList<>();
     }
 
-    public void updateStockListItemDone(int itemId, int projectId, boolean done) {
+
+    public ArrayList<Item> getStockListItemsSorted(Project project) {
+        var session = factory.openSession();
+        var repo = new ItemRepository();
+
+        try {
+            var sql = "FROM StockListItem where project_id=:project_id";
+            var query = session.createQuery(sql);
+            query.setParameter("project_id", project.getId());
+
+            var stockItems = query.list();
+
+            var items = new ArrayList<Item>();
+            for (var i: stockItems) {
+               var item = (StockListItem)i;
+                var it = (Item)repo.getItem(item.getItemId());
+                items.add(new Item(it.getId(), it.getName(), it.getPic(), it.getPrice(), it.getTotalCount(),item.getItemQuantity(),item.getItemPrice(),it.getCategory(),item.isItemDone()));
+            }
+            var sortedItems = new ArrayList<Item>();
+            return repo.sortPerCategory(sortedItems, items);
+
+        } catch (HibernateException exception) {
+            System.err.println(exception);
+        } finally {
+            session.close();
+        }
+        return new ArrayList<>();
+    }
+
+
+    public void updateStockListItemDone(long itemId, long projectId, boolean done) {
         var session = factory.openSession();
         Transaction tx = null;
         try {
@@ -113,7 +148,7 @@ public Object getProject(int id) {
             session.close();
         }
     }
-    public void updateStockListItemQuantityOrPrice(int itemId, int projectId,Integer quantity, Float price) {
+    public void updateStockListItemQuantityOrPrice(long itemId, long projectId,Integer quantity, Float price) {
         var session = factory.openSession();
         Transaction tx = null;
         try {
@@ -137,12 +172,12 @@ public Object getProject(int id) {
         }
     }
 
-        public Integer addProject(@NonNull Project project){
+        public Long addProject(@NonNull Project project){
         var session = factory.openSession();
-        Integer projectId = null;
+        Long projectId = null;
 
         try{
-            projectId  = (Integer)session.save(project);
+            projectId  = (Long)session.save(project);
         }catch (HibernateException ex){
             System.err.println(ex);
         }finally{
@@ -151,7 +186,7 @@ public Object getProject(int id) {
         return projectId ;
     }
 
-    public void addStockListItem(Project project, int itemId, float itemPrice, int quantity) {
+    public void addStockListItem(Project project, long itemId, float itemPrice, int quantity) {
         var session = factory.openSession();
         var stockItem = new StockListItem(0,itemId,itemPrice,quantity,false, project);
         Transaction tx = null;
@@ -169,7 +204,7 @@ public Object getProject(int id) {
         }
     }
 
-    public void deleteStockListItem(int itemId, int projectId){
+    public void deleteStockListItem(long itemId, long projectId){
         var session = factory.openSession();
         Transaction tx = null;
         try{
@@ -190,7 +225,7 @@ public Object getProject(int id) {
         }
     }
 
-    public void deleteStockListItemsByProject(int projectId){
+    public void deleteStockListItemsByProject(long projectId){
         var session = factory.openSession();
         Transaction tx = null;
         try{
@@ -210,7 +245,7 @@ public Object getProject(int id) {
         }
     }
 
-        public void deleteProject(int projectId){
+        public void deleteProject(long projectId){
         var session = factory.openSession();
         Transaction tx = null;
         try{

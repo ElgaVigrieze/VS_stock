@@ -1,9 +1,7 @@
 package com.company.springmvcweb.dto;
 
-import com.company.springmvcweb.data.Category;
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Data
