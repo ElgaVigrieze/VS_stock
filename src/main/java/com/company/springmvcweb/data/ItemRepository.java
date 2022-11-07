@@ -2,6 +2,10 @@ package com.company.springmvcweb.data;
 
 import com.company.springmvcweb.data.Items.*;
 import com.company.springmvcweb.data.enums.Category;
+import com.company.springmvcweb.data.invoice.Invoice;
+import com.company.springmvcweb.data.invoice.InvoiceLine;
+import com.company.springmvcweb.data.project.Project;
+import com.company.springmvcweb.data.project.StockListItem;
 import com.company.springmvcweb.dto.ItemSaveDto;
 import lombok.NonNull;
 import org.hibernate.HibernateException;
@@ -40,6 +44,11 @@ public class ItemRepository {
                     addAnnotatedClass(VideoItem.class).
                     addAnnotatedClass(WorkItem.class).
                     addAnnotatedClass(MiscItem.class).
+                    addAnnotatedClass(InvoiceLine.class).
+                    addAnnotatedClass(Invoice.class).
+                    addAnnotatedClass(Customer.class).
+                    addAnnotatedClass(Project.class).
+                    addAnnotatedClass(StockListItem.class).
                     buildSessionFactory();
         } catch (Throwable ex) {
             System.err.println("Failed to create sessionFactory object." + ex);

@@ -1,6 +1,8 @@
 package com.company.springmvcweb.data;
 
 import com.company.springmvcweb.data.Items.Item;
+import com.company.springmvcweb.data.invoice.Invoice;
+import com.company.springmvcweb.data.invoice.InvoiceLine;
 import com.company.springmvcweb.data.project.StockListItem;
 import com.company.springmvcweb.data.project.Project;
 import lombok.NonNull;
@@ -20,6 +22,9 @@ public class ProjectRepository {
                     configure().
                     addAnnotatedClass(Project.class).
                     addAnnotatedClass(StockListItem.class).
+                    addAnnotatedClass(Invoice.class).
+                    addAnnotatedClass(InvoiceLine.class).
+                    addAnnotatedClass(Customer.class).
                     buildSessionFactory();
 
         } catch (Throwable ex) {

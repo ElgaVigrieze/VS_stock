@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static com.company.springmvcweb.data.utilities.DateConverter.convertStringToDate;
 import static com.company.springmvcweb.data.utilities.ImageDisplay.displayImageFromPath;
 import static com.company.springmvcweb.data.utilities.ImageDisplay.uploadPathProject;
 import static com.company.springmvcweb.data.utilities.PreparePdfData.setPdfDataStocklist;
@@ -44,12 +45,12 @@ public class ProjectController {
 //        var projects = repo1.findAll();
         model.addAttribute("title", "Pasākumi");
         model.addAttribute("projects", projects);
-        return "projects";
+        return "projects/projects";
     }
 
     @PostMapping("/projects")
     public String viewProjects() {
-        return "projects_detail";
+        return "projects/projects_detail";
     }
 
     @GetMapping("/msgboard")
@@ -83,7 +84,7 @@ public class ProjectController {
         model.addAttribute("sum", sum);
         model.addAttribute("sumVat", sumVat);
 
-        return "projects_detail";
+        return "projects/projects_detail";
     }
 
     @GetMapping("/stocklist/{projectId}/preview")
@@ -111,11 +112,11 @@ public ResponseEntity<InputStreamResource> viewPdf(Model model, @PathVariable lo
     @GetMapping("/projects/{projectId}/confirm")
     public String deleteProjectConfirm(@PathVariable long projectId,Model model) {
         var project = (Project)repo1.getProject(projectId);
-        model.addAttribute("title", "Projekts " + project.getTitle());
+        model.addAttribute("title", project.getTitle());
         model.addAttribute("project", project);
         model.addAttribute("confirmDelete", project);
 
-        return "projects_detail";
+        return "projects/projects_detail";
     }
 
     @GetMapping("/projects/{projectId}/delete")
@@ -133,8 +134,8 @@ public ResponseEntity<InputStreamResource> viewPdf(Model model, @PathVariable lo
         var project = (Project)repo1.getProject(projectId);
         model.addAttribute("projectId",projectId);
         model.addAttribute("project", project);
-        model.addAttribute("title", "Projekts " + project.getTitle());
-        return "projects_id_update";
+        model.addAttribute("title", project.getTitle());
+        return "projects/projects_id_update";
     }
     @PostMapping("/projects/{projectId}/update")
     public ModelAndView updateProjectSave (@PathVariable long projectId, ProjectSaveDto dto, Model model) {
@@ -182,7 +183,7 @@ public ResponseEntity<InputStreamResource> viewPdf(Model model, @PathVariable lo
         model.addAttribute("items", sortedItems);
         model.addAttribute("sum", String.format("%.2f",sum));
         model.addAttribute("sumVat", String.format("%.2f",sum*1.21));
-        return "projects_stock_list_edit";
+        return "projects/projects_stock_list_edit";
     }
 
     @GetMapping("/stocklist/{projectId}")
@@ -233,7 +234,7 @@ public ResponseEntity<InputStreamResource> viewPdf(Model model, @PathVariable lo
                 }
             }
         }
-        model.addAttribute("title", "Projekts "+project.getTitle());
+        model.addAttribute("title", project.getTitle());
         model.addAttribute("items", sortedItems);
         return new ModelAndView("redirect:/projects/{projectId}/list/edit");
     }
@@ -242,7 +243,7 @@ public ResponseEntity<InputStreamResource> viewPdf(Model model, @PathVariable lo
     public ModelAndView deleteItemFromProjectList(@PathVariable long projectId, @PathVariable long id, Model model) {
         var project = (Project)repo1.getProject(projectId);
         repo1.deleteStockListItem(id,projectId);
-        model.addAttribute("title", "Projekts "+project.getTitle());
+        model.addAttribute("title", project.getTitle());
         model.addAttribute("id", id);
         return new ModelAndView("redirect:/projects/{projectId}/list/edit");
     }
@@ -278,7 +279,7 @@ public ResponseEntity<InputStreamResource> viewPdf(Model model, @PathVariable lo
         model.addAttribute("mspotlights", mspotlights);
         model.addAttribute("misc", misc);
         model.addAttribute("transport", transport);
-        return "projects_id_add";
+        return "projects/projects_id_add";
     }
 
     @PostMapping("/projects/{projectId}/add")
@@ -300,15 +301,13 @@ public ResponseEntity<InputStreamResource> viewPdf(Model model, @PathVariable lo
 
     @GetMapping("/new_project")
     public String addProject(Model model) {
-        model.addAttribute("title","Jauns projekts");
-        return "new_project";
+        model.addAttribute("title","Jauns pasākums");
+        return "projects/new_project";
     }
 
     @PostMapping("/new_project")
     public ModelAndView saveProject(@ModelAttribute ProjectSaveDto dto) {
-        var d = dto.getDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(d, formatter);
+        LocalDate date = convertStringToDate(dto.getDate());
         repo1.addProject(new Project(0,dto.getTitle(),dto.getLocation(), date, dto.getDescription()));
         return new ModelAndView("redirect:/projects");
     }
@@ -327,7 +326,7 @@ public ResponseEntity<InputStreamResource> viewPdf(Model model, @PathVariable lo
         }
         model.addAttribute("title", p.getTitle());
         model.addAttribute("id",id);
-        return "projects_id_gallery";
+        return "projects/projects_id_gallery";
     }
 
     @PostMapping("/projects/{id}/gallery")

@@ -1,6 +1,8 @@
 package com.company.springmvcweb.data.project;
 
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -27,7 +29,9 @@ public class Project {
     private String description;
     @Column(name="gallery")
     private String pics;
-    @OneToMany(cascade=CascadeType.REMOVE, fetch=FetchType.EAGER)
+    @OneToMany(cascade=CascadeType.REMOVE)
+//    @OneToMany(cascade=CascadeType.REMOVE, fetch=FetchType.EAGER)
+    @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(name="stock_list", joinColumns=@JoinColumn(name="project_id"), inverseJoinColumns=@JoinColumn(name="item_id"))
     private List<StockListItem> items;
 

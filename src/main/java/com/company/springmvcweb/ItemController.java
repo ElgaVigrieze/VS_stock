@@ -42,7 +42,7 @@ public class ItemController {
         List<String> categories= Category.getCategoriesPublic();
         model.addAttribute("title", "Pievienot jaunu tehnikas vienību");
         model.addAttribute("categories", categories);
-        return "new_item";
+        return "items/new_item";
     }
 
     @PostMapping("/new_item")
@@ -55,11 +55,11 @@ public class ItemController {
         model.addAttribute("category", category);
         model.addAttribute("locations", locations);
         switch(cat){
-            case SPEAKER,MIC,CONSOLE,STAND,STAGE, CABLE,MISC,VIDEO,TRANSPORT,WORK -> { return "new_item_cat";
+            case SPEAKER,MIC,CONSOLE,STAND,STAGE, CABLE,MISC,VIDEO,TRANSPORT,WORK -> { return "items/new_item_cat";
             }
-            case LIGHTS,MSPOTLIGHT,NMSPOTLIGHT -> { return "new_item_lights";
+            case LIGHTS,MSPOTLIGHT,NMSPOTLIGHT -> { return "items/new_item_lights";
             }
-            case TRUSS -> { return  "new_item_stage";
+            case TRUSS -> { return  "items/new_item_stage";
             }
         }
         return "";
@@ -82,7 +82,7 @@ public class ItemController {
 
     @GetMapping("/items/{id}/upload")
     public String uploadPic1 (@PathVariable long id) throws IOException {
-        return "items_edit_upload";
+        return "items/items_edit_upload";
     }
 
     @PostMapping("/items/{id}/upload")
@@ -128,16 +128,16 @@ public class ItemController {
         model.addAttribute("mspotlights", mspotlights);
         model.addAttribute("misc", misc);
         model.addAttribute("transport", transport);
-        return "items";
+        return "items/items";
     }
 
     @PostMapping("/items")
     public String editItems() {
-        return "items_edit";
+        return "items/items_edit";
     }
 
     @GetMapping("/items/{id}")
-    public String editItem(@PathVariable long id, Model model) throws IOException, ServletException {
+    public String editItem(@PathVariable long id, Model model) throws IOException{
         var item = (Item)repo.getItem(id);
        var categories = Category.getCategoriesPublic();
         List<Location> locations = Arrays.asList(Location.values());
@@ -159,11 +159,11 @@ public class ItemController {
 
 
         switch(item.getCategory()){
-            case SPEAKER,MIC,CONSOLE,STAND,STAGE, CABLE,MISC,VIDEO,TRANSPORT,WORK -> { return "items_edit";
+            case SPEAKER,MIC,CONSOLE,STAND,STAGE, CABLE,MISC,VIDEO,TRANSPORT,WORK -> { return "items/items_edit";
             }
-            case LIGHTS,MSPOTLIGHT,NMSPOTLIGHT -> { return "items_edit_light";
+            case LIGHTS,MSPOTLIGHT,NMSPOTLIGHT -> { return "items/items_edit_light";
             }
-            case TRUSS -> { return  "items_edit_stage";
+            case TRUSS -> { return  "items/items_edit_stage";
             }
         }
         return "";

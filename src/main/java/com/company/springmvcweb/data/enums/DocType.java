@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.Objects;
 
 public enum DocType {
-    INVOICE("Rēķins"),
-    INVOICE_DELIVERY_INVOICE("Rēķins - pavadzīme"),
-    DELIVERY_INVOICE("Pavadzīme");
+    SERVICE_INVOICE("pakalpojumu rēķins"),
+    GOODS_INVOICE("preču rēķins"),
+//    INVOICE_DELIVERY_INVOICE("Rēķins - pavadzīme"),
+    DELIVERY_INVOICE("pavadzīme");
 
     public final String value;
     static final List<DocType> types = Arrays.asList(DocType.values());

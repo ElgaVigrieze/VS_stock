@@ -1,11 +1,14 @@
 package com.company.springmvcweb.data;
 
 import com.company.springmvcweb.data.Items.Item;
+import com.company.springmvcweb.data.invoice.InvoiceLine;
 import com.company.springmvcweb.data.project.StockListItem;
 import com.company.springmvcweb.data.invoice.Invoice;
 import com.company.springmvcweb.data.project.Project;
+import lombok.NonNull;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 import java.util.ArrayList;
@@ -20,6 +23,7 @@ public class CustomerRepository {
                     configure().
                     addAnnotatedClass(Invoice.class).
                     addAnnotatedClass(Customer.class).
+                    addAnnotatedClass(InvoiceLine.class).
                     addAnnotatedClass(Project.class).
                     addAnnotatedClass(StockListItem.class).
                     addAnnotatedClass(Item.class).
@@ -60,6 +64,54 @@ public class CustomerRepository {
             session.close();
         }
         return new ArrayList<>();
+    }
+
+    public void deleteCustomer(long customerId){
+        var session = factory.openSession();
+        Transaction tx = null;
+        try{
+            tx = session.beginTransaction();
+            var i = session.get(Customer.class, customerId);
+            session.delete(i);
+            tx.commit();
+        }catch (HibernateException ex){
+            if(tx != null){
+                tx.rollback();
+            }
+            System.err.println(ex);
+        }finally{
+            session.close();
+        }
+    }
+
+    public void updateCustomer(@NonNull Object item) {
+        var session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            session.update(item);
+            tx.commit();
+        } catch (HibernateException exception) {
+            if(tx != null) {
+                tx.rollback();
+            }
+            System.err.println(exception);
+        } finally {
+            session.close();
+        }
+    }
+
+    public Long addCustomer(@NonNull Customer customer){
+        var session = factory.openSession();
+        Long customerId= null;
+        try{
+            customerId = (Long)session.save(customer);
+        }catch (HibernateException ex){
+            System.err.println(ex);
+        }finally{
+            session.close();
+        }
+        return customerId;
     }
 
 
