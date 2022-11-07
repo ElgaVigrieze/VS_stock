@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:float="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layouts/default">
+<div class="container" th:fragment="deliveryInvoice">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
@@ -15,34 +16,18 @@
     * { font-family: Verdana; }
                 #vertical thead,#vertical tbody{
                 display:inline-block;}
-       </style>
-
+    </style>
 </head>
 <body>
-<div th:replace="pdf_header_delivery_invoice :: pdfheader"></div>
+<div class="container" th:fragment="deliveryInvoice">
+    <h1 th:text="'Pavadzīme Nr. '+${invoice.getNumber()}"/>
+    <h2  th:text="${invoice.getStringDate()}"/>
+    <br></br>
+    <p th:text="'Apmaksāt līdz: '+${invoice.getStringDueDate()}"/>
+    <p>Apmaksas veids: pārskaitījums</p>
+
 <div>
     <table id="vertical">
-        <tr>
-            <th>Izpildītājs: </th>
-            <td>SIA "VentSystem.lv"</td>
-        </tr>
-        <tr>
-            <th>Adrese: </th>
-            <td>Lielais prospekts 18–11, Ventspils, LV-3601</td>
-        </tr>
-        <tr>
-            <th>PVN reģistrācijas Nr.: </th>
-            <td>LV41203041233</td>
-        </tr>
-        <tr>
-            <th>Norēķinu rekvizīti: </th>
-            <td>A/S "Swedbank", HABA22LV</td>
-        </tr>
-        <tr>
-            <th>Konta Nr.: </th>
-            <td>LV51HABA0551031251238</td>
-        </tr>
-        <tr><td colspan="2">___________________________________________________________________</td></tr>
         <tr>
             <th>Pasūtītājs: </th>
             <td th:text="${invoice.getCustomer().getName()}"/>
@@ -53,7 +38,7 @@
         </tr>
         <tr>
             <th>Piegādes adrese: </th>
-            <td th:text="${invoice.getCustomer().getDeliveryAddress()}"/>
+            <td th:text="${invoice.getDeliveryAddress()}"/>
         </tr>
         <tr>
             <th>PVN reģistrācijas Nr.: </th>
@@ -85,7 +70,6 @@
             <td th:text="${line.getPrice()}"/>
             <td th:text="${line.getSum()}"/>
         </tr>
-        <tr><td colspan="4">___________________________________________________________________</td></tr>
         <tr>
             <td></td>
             <td colspan="2" th:text="'Summa: '"/>
@@ -109,5 +93,6 @@
 <br></br>
 <br></br>
 <div>K.Sproģis</div>
+</div>
 </body>
 </html>

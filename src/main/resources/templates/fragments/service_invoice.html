@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:float="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layouts/default">
+<div class="container" th:fragment="serviceInvoice">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
@@ -19,30 +20,15 @@
 
 </head>
 <body>
-<div th:replace="pdf_header_delivery_invoice :: pdfheader"></div>
+
+    <h1 th:text="'Rēķins Nr. '+${invoice.getNumber()}"/>
+    <h2  th:text="${invoice.getStringDate()}"/>
+    <br></br>
+    <p th:text="'Apmaksāt līdz: '+${invoice.getStringDueDate()}"/>
+    <p>Apmaksas veids: pārskaitījums</p>
 <div>
     <table id="vertical">
-        <tr>
-            <th>Izpildītājs: </th>
-            <td>SIA "VentSystem.lv"</td>
-        </tr>
-        <tr>
-            <th>Adrese: </th>
-            <td>Lielais prospekts 18–11, Ventspils, LV-3601</td>
-        </tr>
-        <tr>
-            <th>PVN reģistrācijas Nr.: </th>
-            <td>LV41203041233</td>
-        </tr>
-        <tr>
-            <th>Norēķinu rekvizīti: </th>
-            <td>A/S "Swedbank", HABA22LV</td>
-        </tr>
-        <tr>
-            <th>Konta Nr.: </th>
-            <td>LV51HABA0551031251238</td>
-        </tr>
-        <tr><td colspan="2">___________________________________________________________________</td></tr>
+
         <tr>
             <th>Pasūtītājs: </th>
             <td th:text="${invoice.getCustomer().getName()}"/>
@@ -50,10 +36,6 @@
         <tr>
             <th>Adrese: </th>
             <td th:text="${invoice.getCustomer().getBillingAddress()}"/>
-        </tr>
-        <tr>
-            <th>Piegādes adrese: </th>
-            <td th:text="${invoice.getCustomer().getDeliveryAddress()}"/>
         </tr>
         <tr>
             <th>PVN reģistrācijas Nr.: </th>
@@ -68,38 +50,31 @@
             <td th:text="${invoice.getCustomer().getAccountNumber()}"/>
         </tr>
     </table>
+
     <br></br>
     <table class="table table-hover">
         <thead>
         <tr>
             <th width="450px">Nosaukums</th>
-            <th width="150px">Daudzums</th>
-            <th width="100px">Cena</th>
             <th width="100px">Summa</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="line: ${invoice.getLines()}">
             <td th:text="${line.getDescription()}"/>
-            <td th:text="${line.getQuantity()}"/>
-            <td th:text="${line.getPrice()}"/>
             <td th:text="${line.getSum()}"/>
         </tr>
-        <tr><td colspan="4">___________________________________________________________________</td></tr>
         <tr>
-            <td></td>
-            <td colspan="2" th:text="'Summa: '"/>
-            <td colspan="1" th:text="${invoice.getTotal()+' &euro;'}"/>
+            <td style="text-align:right;" th:text="'Summa: '"/>
+            <td th:text="${invoice.getTotal()+' &euro;'}"/>
         </tr>
         <tr>
-            <td></td>
-            <td colspan="2" th:text="'PVN 21%: '"/>
-            <td colspan="1" th:text="${#numbers.formatDecimal((invoice.getTotal()*0.21),1,2)+' &euro;'}"/>
+            <td style="text-align:right;" th:text="'PVN 21%: '"/>
+            <td th:text="${#numbers.formatDecimal((invoice.getTotal()*0.21),1,2)+' &euro;'}"/>
         </tr>
         <tr>
-            <td></td>
-            <td colspan="2" th:text="'Kopā: '"/>
-            <td colspan="1" th:text="${#numbers.formatDecimal((invoice.getTotal()+(invoice.getTotal()*0.21)),1,2)+' &euro;'}"/>
+            <td style="text-align:right;" th:text="'Kopā: '"/>
+            <td th:text="${#numbers.formatDecimal((invoice.getTotal()+(invoice.getTotal()*0.21)),1,2)+' &euro;'}"/>
         </tr>
         </tbody>
 
@@ -108,6 +83,7 @@
 <br></br>
 <br></br>
 <br></br>
-<div>K.Sproģis</div>
+<div> Rēķins ir sagatavots elektroniski un ir derīgs bez paraksta</div>
 </body>
+</div>
 </html>
